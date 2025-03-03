@@ -1,0 +1,11 @@
+transformers==4.49.0
+Flask
+torch
+torchvision
+pandas
+numpy
+scikit-learn
+Pillow
+google-genai
+google
+qwen_vl_utils
