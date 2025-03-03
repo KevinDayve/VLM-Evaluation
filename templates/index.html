@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>AI Model Evaluator</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body { padding-top: 2rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>AI Model Evaluator</h1>
+  <p>
+    Select your task, upload your file (or specify a dataset directory), and provide a prompt.
+    <br>
+    <small>Hold Ctrl (or Command on Mac) to select multiple models for comparison.</small>
+  </p>
+  
+  <form id="evalForm" action="/predict" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+      <label for="modality">Modality:</label>
+      <select class="form-control" id="modality" name="modality">
+        <option value="image">Image</option>
+        <option value="video">Video</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label for="model">Model (select one or more):</label>
+      <select class="form-control" id="model" name="model" multiple>
+        <option value="Gemini Flash Lite">Gemini Flash Lite</option>
+        <option value="Qwen 2.5 3B Instruct VL">Qwen 2.5 3B Instruct VL</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label for="prompt">Prompt:</label>
+      <input type="text" class="form-control" id="prompt" name="prompt" placeholder="Enter your prompt">
+    </div>
+    
+    <div class="form-group">
+      <label for="expected_output">Expected Output (optional, for single file mode):</label>
+      <input type="text" class="form-control" id="expected_output" name="expected_output" placeholder="Enter expected output">
+    </div>
+    
+    <div class="form-group">
+      <label for="data_directory">Dataset Directory (optional, for bulk evaluation):</label>
+      <input type="text" class="form-control" id="data_directory" name="data_directory" placeholder="e.g., /path/to/your/data">
+    </div>
+    
+    <div class="form-group">
+      <label for="file">File Upload (for single file mode):</label>
+      <input type="file" class="form-control-file" id="file" name="file">
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Run Inference</button>
+  </form>
+  
+  <div id="result" class="mt-4"></div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+  $('#evalForm').on('submit', function(e) {
+    e.preventDefault(); // prevent page refresh
+    var formData = new FormData(this);
+    
+    // Show running status
+    $('#result').html('<div class="alert alert-info">Running model inference... Please wait.</div>');
+    
+    $.ajax({
+      url: '/predict',
+      type: 'POST',
+      data: formData,
+      contentType: false,
+      processData: false,
+      success: function(data) {
+        let formatted = JSON.stringify(data, null, 2);
+        $('#result').html('<div class="alert alert-success"><pre>' + formatted + '</pre></div>');
+      },
+      error: function(err) {
+        $('#result').html('<div class="alert alert-danger">Error: ' + err.responseJSON.error + '</div>');
+      }
+    });
+  });
+</script>
+</body>
+</html>
