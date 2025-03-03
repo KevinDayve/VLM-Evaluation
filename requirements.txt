@@ -7,5 +7,5 @@ numpy
 scikit-learn
 Pillow
 google-genai
-google
+google-generativeai
 qwen_vl_utils
